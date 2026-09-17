@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#162f39">
+  <meta name="description" content="Lista de Invitados AGDV para registrar invitados, crear mesas y organizar matrimonios.">
+  <title>Nuevo matrimonio · Invitados</title>
+  <link rel="icon" href="logo-agdv.jpg?v=20260916-3" type="image/jpeg">
+  <link rel="stylesheet" href="styles.css?v=20260916-2">
+  <script src="config.js?v=20260916-2" defer></script>
+  <script src="app.js?v=20260916-2" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Saltar al contenido</a>
+  <header class="topbar">
+    <a class="brand" href="#invitados" aria-label="Ir a invitados"><img class="brand-logo" src="logo-agdv.jpg?v=20260916-3" alt="Logo Antonia García de Vicente" width="48" height="60"><span>AGDV<span class="brand-caption">LISTA DE INVITADOS</span></span></a>
+    <div class="top-actions"><span id="saveStatus" class="save-status" role="status">Sincronizando…</span><span id="accessMode" class="access-mode">Gestión de invitados</span><button id="adminBtn" class="admin-button" aria-label="Entrar al modo administración"><span aria-hidden="true">🔒</span> Administración</button><button id="settingsBtn" class="icon-button admin-only" aria-label="Abrir ajustes" title="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="15" cy="17" r="3" fill="currentColor"/></svg></button></div>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="event-heading">
+      <div><p class="eyebrow">LISTA DE INVITADOS</p><h1 id="eventTitle">Nuevo matrimonio</h1><p class="event-meta" id="eventMeta">Configura el evento desde Ajustes</p></div>
+      <button class="primary add-guest" id="newGuestBtn"><span aria-hidden="true">＋</span> Agregar invitado</button>
+    </section>
+    <section class="stats" aria-label="Resumen de invitados" id="stats"></section>
+    <nav class="view-nav" aria-label="Secciones">
+      <button data-view="invitados" class="active" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 4v2"/></svg><span>Invitados</span></button>
+      <button data-view="mesas"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="12" rx="4"/><path d="M8 2v4m8-4v4M8 18v4m8-4v4M1 10h3m16 0h3M1 14h3m16 0h3"/></svg><span>Mesas y plano</span></button>
+      <button data-view="catering"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v7m3-7v7M2 3v7c0 4 6 4 6 0M5 13v8M18 3c-5 4-5 10 0 10V3Zm0 10v8"/></svg><span>Alimentación</span></button>
+      <button data-view="respaldo" class="admin-only"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 15v6h16v-6"/></svg><span>Exportar</span></button>
+    </nav>
+    <section id="view-invitados" class="view">
+      <div class="guest-layout">
+        <article class="surface guest-surface">
+          <div class="section-heading"><div><p class="eyebrow">CADA PERSONA, UN LUGAR</p><h2>Lista de invitados <span id="listCount" class="count">0</span></h2></div><button class="text-button" id="refreshBtn">↻ Actualizar</button></div>
+          <div class="search-row"><label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="search" type="search" placeholder="Buscar nombre, mesa o rol…" aria-label="Buscar invitados"></label><label class="visually-hidden" for="statusFilter">Confirmación</label><select id="statusFilter"><option value="">Toda confirmación</option><option>Pendiente</option><option>Confirmado</option><option>No asiste</option></select></div>
+          <div class="filter-row" role="group" aria-label="Tipo de invitado"><button data-filter="Todos" class="chip active" aria-pressed="true">Todos</button><button data-filter="Mesa" class="chip" aria-pressed="false">En mesas</button><button data-filter="Sin mesa" class="chip" aria-pressed="false">Por asignar</button><button data-filter="Trasnoche" class="chip" aria-pressed="false">Trasnoche</button><button data-filter="Extra" class="chip" aria-pressed="false">Equipo / extras</button></div>
+          <div id="guestList" class="guest-list"></div>
+          <div class="list-footer"><span id="resultText"></span><div><button id="prevPage" class="icon-button" aria-label="Página anterior">←</button><span id="pageText"></span><button id="nextPage" class="icon-button" aria-label="Página siguiente">→</button></div></div>
+        </article>
+        <aside class="sidebar">
+          <article class="occupancy-card"><p class="eyebrow">EL ENCUENTRO PERFECTO</p><h2>Un lugar<br>para todos.</h2><div class="occupancy-ring" id="occupancyRing"><div><strong id="occupancyNumber">0%</strong><span>ocupación</span></div></div><p id="occupancyText"></p><button class="light-button" data-go="mesas">Organizar las mesas <span aria-hidden="true">↗</span></button></article>
+          <article class="surface quick-summary"><h3>Antes del gran día</h3><div id="quickSummary"></div><p class="small muted">Los invitados que no asisten no ocupan cupos ni se incluyen en catering.</p></article>
+        </aside>
+      </div>
+    </section>
+    <section id="view-mesas" class="view" hidden>
+      <div class="section-heading"><div><p class="eyebrow">DISTRIBUCIÓN DEL EVENTO</p><h2>Cada mesa, una historia</h2></div><button class="primary admin-only" id="newTableBtn">＋ Crear mesa</button></div>
+      <div class="map-layout">
+        <article class="surface map-card">
+          <div class="map-toolbar"><div class="segmented"><button id="showMap" class="active" aria-pressed="true">Plano</button><button id="showCards" aria-pressed="false">Lista de mesas</button></div><div class="zoom-controls"><button id="zoomOut" class="icon-button" aria-label="Alejar plano">−</button><button id="zoomReset" class="text-button">100%</button><button id="zoomIn" class="icon-button" aria-label="Acercar plano">＋</button></div></div>
+          <div id="mapViewport" class="map-viewport"><div id="board" class="board"><img id="planImage" alt="Plano del evento" width="960" height="1330" draggable="false"><div id="planPlaceholder" class="plan-placeholder"><div><strong>Sin plano cargado</strong><p>Entra a Ajustes para indicar el nombre del PNG o una URL HTTPS.</p></div></div><div id="markers"></div></div></div>
+          <div id="tableCards" class="table-cards" hidden></div>
+          <div class="map-footer"><span>Selecciona una mesa. Desliza el plano o usa el zoom para recorrerlo.</span><a href="" target="_blank" rel="noopener" hidden>Abrir PDF del plano ↗</a></div>
+          <div class="legend"><span><i class="dot available"></i>Libre</span><span><i class="dot partial"></i>Con invitados</span><span><i class="dot full"></i>Completa</span><span><i class="dot over"></i>Sobre cupo</span></div>
+        </article>
+        <aside id="tableDetail" class="surface table-detail"></aside>
+      </div>
+      <p class="small muted">La plantilla comienza sin mesas. Crea cada mesa según el plano de tu evento y ajusta su capacidad, forma, color y posición.</p>
+    </section>
+    <section id="view-catering" class="view" hidden><div class="section-heading"><div><p class="eyebrow">DETALLES QUE IMPORTAN</p><h2>Alimentación y cuidados</h2></div><button class="secondary admin-only" id="cateringCsv">Descargar catering</button></div><p class="muted">Personas confirmadas o pendientes, incluidos trasnoche y equipo. Selecciona una categoría para ver los detalles informados.</p><div id="cateringCards" class="catering-grid"></div><article class="surface"><div class="section-heading"><h3 id="cateringTitle">Todos los menús</h3><button class="text-button" id="allCatering">Ver todos</button></div><div id="cateringList" class="guest-list"></div></article></section>
+    <section id="view-respaldo" class="view" hidden><div class="section-heading"><div><p class="eyebrow">TODO LISTO PARA COMPARTIR</p><h2>Tu lista, siempre a mano</h2></div></div><div class="export-grid">
+      <article class="surface export-card admin-only"><span class="export-number">01</span><h3>Lista para Excel</h3><p>Todos los invitados, sus mesas, confirmación y alimentación en un archivo CSV.</p><button class="primary" id="exportCsv">Descargar lista CSV</button></article>
+      <article class="surface export-card admin-only"><span class="export-number">02</span><h3>Documento para imprimir</h3><p>Lista completa agrupada por mesa y un resumen para el equipo de catering.</p><button class="secondary" id="printBtn">Imprimir / guardar PDF</button></article>
+      <article class="surface export-card admin-only"><span class="export-number">03</span><h3>Copia de respaldo</h3><p>Guarda invitados, mesas y ajustes. Puedes restaurarlos en otro dispositivo.</p><button class="secondary" id="backupBtn">Descargar respaldo</button><button class="text-button" id="importBtn">Restaurar un respaldo</button><input id="importFile" type="file" accept=".json,application/json" hidden></article>
+    </div><div class="local-note"><strong id="exportAccessTitle">Las exportaciones están protegidas</strong><p id="exportAccessText">Entra al modo administración para descargar listas, respaldos o conectar una Google Sheet.</p><button class="text-button" id="connectShortcut">Abrir administración ↗</button></div></section>
+    <footer class="page-footer"><span>AGDV · Lista de Invitados</span><span>Configuración personalizada</span></footer>
+  </main>
+  <dialog id="editorDialog" aria-labelledby="dialogTitle"><div class="dialog-head"><div><p class="eyebrow" id="dialogEyebrow">INVITADOS</p><h2 id="dialogTitle"></h2></div><button type="button" class="icon-button" id="closeDialog" aria-label="Cerrar">×</button></div><div id="dialogBody"></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="printArea"></div>
+  <noscript>Activa JavaScript en tu navegador para utilizar la lista de invitados.</noscript>
+</body>
+</html>
